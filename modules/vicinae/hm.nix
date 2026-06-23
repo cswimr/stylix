@@ -1,25 +1,24 @@
-{
-  mkTarget,
-  lib,
-  options,
-  ...
-}:
+{ mkTarget, ... }:
 mkTarget {
-  config =
-    let
-      eachConfig =
-        config:
-        lib.genAttrs [ "services" "programs" ] (
-          source: lib.optionalAttrs (options.${source} ? vicinae) { vicinae = config; }
-        );
-    in
-    [
-      (
-        { colors, polarity }:
-        eachConfig {
-          settings.theme = {
-            light.name = "stylix";
-            dark.name = "stylix";
+  config = [
+    (
+      { opacity }:
+      {
+        programs.vicinae.settings = {
+          launcher_window.opacity = opacity.popups;
+        };
+      }
+    )
+
+    (
+      { colors, polarity }:
+      {
+        programs.vicinae = {
+          settings = {
+            theme = {
+              light.name = "stylix";
+              dark.name = "stylix";
+            };
           };
           themes.stylix = {
             meta = {
@@ -55,8 +54,8 @@ mkTarget {
               };
             };
           };
-        }
-      )
-      ({ opacity }: eachConfig { settings.launcher_window.opacity = opacity.popups; })
-    ];
+        };
+      }
+    )
+  ];
 }
